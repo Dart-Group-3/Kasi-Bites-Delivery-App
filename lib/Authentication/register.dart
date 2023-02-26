@@ -1,6 +1,10 @@
+import 'dart:html';
+
 import 'package:flutter/material.dart';
 import 'package:restaurant_app/Widgets/custom_text_field.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 
 class Registerscreen extends StatefulWidget {
   const Registerscreen({super.key});
@@ -21,6 +25,33 @@ class _Registerscreen extends State<Registerscreen> {
   XFile? imageXFile;
   final ImagePicker _picker = ImagePicker();
 
+  Position? position;
+  List<Placemark>? placeMarks;
+
+  Future<void> _getImage() async
+  {
+    imageXFile = await _picker.pickImage(source: ImageSource.gallery);
+    
+    setState(() {
+      imageXFile;
+    });
+
+  }
+
+  getCurrentLocation() async
+  {
+    Position newPosition = await Geolocator.getCurrentLocation(
+      desireAccuracy: LocationAccuracy.high,
+    );
+
+    position = newPosition;
+
+    placeMarks = await placeMarkFromCoordinates(
+      position!.latitude,
+      position!.longitude,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -32,6 +63,10 @@ class _Registerscreen extends State<Registerscreen> {
               height: 10,
             ),
             InkWell(
+              onTap: ()
+              {
+                _getImage();
+              },
               child: CircleAvatar(
                 radius: MediaQuery.of(context).size.width * 0.20,
                 backgroundColor: Colors.white,
@@ -52,69 +87,70 @@ class _Registerscreen extends State<Registerscreen> {
             ),
             Form(
               key: _formkey,
-              child: Column(children: [
-                Customtextfield(
-                  data: Icons.person,
-                  controller: nameController,
-                  hintText: "Name",
-                  isObsecre: false,
-                )
-                Customtextfield(
-                  data: Icons.email,
-                  controller: emailController,
-                  hintText: "Email",
-                  isObsecre: false,
-                )
-                Customtextfield(
-                  data: Icons.lock,
-                  controller: passwordController,
-                  hintText: "Password",
-                  isObsecre: true,
-                )
-                Customtextfield(
-                  data: Icons.lock,
-                  controller: confirmPasswordController,
-                  hintText: "Confirm Password",
-                  isObsecre: true,
-                )
-                Customtextfield(
-                  data: Icons.phone,
-                  controller: phoneController,
-                  hintText: "Phone",
-                  isObsecre: false,
-                )
-                Customtextfield(
-                  data: Icons.my_location,
-                  controller: locationController,
-                  hintText: "Restaurant Location",
-                  isObsecre: false,
-                  enabled: false,
-                ),
-                Container(
-                  width: 400,
-                  height: 40,
-                  alignment: Alignment.center,
-                  child: ElevatedButton.icon(
-                    label: const Text(
-                      "Get my current Location",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    icon: const Icon(
-                      Icons.location_on,
-                      color: Colors.white,
-                    ),
-                    onPressed: () => print("clicked"),
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.blueAccent,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
+              child: Column(
+                children: [
+                  Customtextfield(
+                    data: Icons.person,
+                    controller: nameController,
+                    hintText: "Name",
+                    isObsecre: false,
+                  ),
+                  Customtextfield(
+                    data: Icons.email,
+                    controller: emailController,
+                    hintText: "Email",
+                    isObsecre: false,
+                  ),
+                  Customtextfield(
+                    data: Icons.lock,
+                    controller: passwordController,
+                    hintText: "Password",
+                    isObsecre: true,
+                  ),
+                  Customtextfield(
+                    data: Icons.lock,
+                    controller: confirmPasswordController,
+                    hintText: "Confirm Password",
+                    isObsecre: true,
+                  )
+                  Customtextfield(
+                    data: Icons.phone,
+                    controller: phoneController,
+                    hintText: "Phone",
+                    isObsecre: false,
+                  )
+                  Customtextfield(
+                    data: Icons.my_location,
+                    controller: locationController,
+                    hintText: "Restaurant Location",
+                    isObsecre: false,
+                    enabled: false,
+                  ),
+                  Container(
+                    width: 400,
+                    height: 40,
+                    alignment: Alignment.center,
+                    child: ElevatedButton.icon(
+                      label: const Text(
+                        "Get my current Location",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      icon: const Icon(
+                        Icons.location_on,
+                        color: Colors.white,
+                      ),
+                      onPressed: () => print("clicked"),
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.blueAccent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
                       ),
                     ),
-
                   ),
-                )
-              ]),
-            )
+                ],
+              ),
+            ),
             const SizedBox(height: 30,),
             ElevatedButton(
               child: const Text(
@@ -127,7 +163,7 @@ class _Registerscreen extends State<Registerscreen> {
               ),
               onPressed: () => print("clicked"),
             ),
-            const Size(height: 30,),
+            const SizedBox(height: 30,),
           ],
         ),
       ),
