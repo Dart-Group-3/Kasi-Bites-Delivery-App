@@ -19,6 +19,13 @@ class _Mysplashscreen extends State<Mysplashscreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+
+    startTimer();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Material(
         child: Container(
@@ -32,7 +39,7 @@ class _Mysplashscreen extends State<Mysplashscreen> {
             const Padding(
                 padding: EdgeInsets.all(18.0),
                 child: Text(
-                  "Restaurant App",
+                  "Your no1 Restaurant App",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.black54,
